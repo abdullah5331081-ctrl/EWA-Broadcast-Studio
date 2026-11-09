@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EWA Broadcast Studio</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#090d16">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #090d16;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 230px;
+  background: #101725;
+  padding: 25px 18px;
+  border-right: 1px solid #263247;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 900;
+  color: #38bdf8;
+  margin-bottom: 8px;
+}
+
+.logo small {
+  display: block;
+  color: #8998ad;
+  font-size: 10px;
+  letter-spacing: 3px;
+  margin-top: 6px;
+}
+
+.menu-title {
+  color: #718096;
+  font-size: 11px;
+  margin: 35px 10px 12px;
+  letter-spacing: 2px;
+}
+
+.menu-item {
+  padding: 13px;
+  color: #aab7ca;
+  border-radius: 7px;
+  margin-bottom: 7px;
+  font-size: 14px;
+}
+
+.menu-item.active {
+  background: #153450;
+  color: #38bdf8;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 30px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.topbar h1 {
+  font-size: 25px;
+}
+
+.subtitle {
+  color: #8290a5;
+  font-size: 13px;
+  margin-top: 7px;
+}
+
+.live {
+  background: #142c27;
+  color: #4ade80;
+  border: 1px solid #286344;
+  padding: 9px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: #111b2a;
+  border: 1px solid #263247;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.card-label {
+  color: #8290a5;
+  font-size: 12px;
+}
+
+.card-value {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.blue { color: #38bdf8; }
+.green { color: #4ade80; }
+.orange { color: #fb923c; }
+.purple { color: #c084fc; }
+
+.section {
+  background: #111b2a;
+  border: 1px solid #263247;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.section-head {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #263247;
+}
+
+.section-head h2 {
+  font-size: 17px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 0;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.primary {
+  background: #0284c7;
+  color: white;
+}
+
+.secondary {
+  background: #263247;
+  color: white;
+}
+
+.danger {
+  background: #632b36;
+  color: #fecaca;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th {
+  color: #8290a5;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 17px 14px;
+  background: #0e1724;
+}
+
+td {
+  padding: 15px 14px;
+  border-top: 1px solid #263247;
+  font-size: 13px;
+}
+
+.team {
+  font-weight: bold;
+}
+
+.rank {
+  color: #38bdf8;
+  font-weight: bold;
+}
+
+input, select {
+  background: #202c3d;
+  color: white;
+  border: 1px solid #36465d;
+  border-radius: 5px;
+  padding: 8px;
+  width: 65px;
+}
+
+select {
+  width: 75px;
+}
+
+.total {
+  color: #4ade80;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.footer {
+  text-align: center;
+  color: #65748a;
+  padding: 25px;
+  font-size: 11px;
+}
+
+@media(max-width: 850px) {
+  .sidebar { width: 175px; }
+  .main { padding: 20px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media(max-width: 550px) {
+  .sidebar { display: none; }
+  .main { padding: 15px; }
+  .topbar h1 { font-size: 21px; }
+  .stats { gap: 9px; }
+  .card { padding: 13px; }
+  .card-value { font-size: 23px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="logo">
+      EWA
+      <small>BROADCAST STUDIO</small>
+    </div>
+
+    <div class="menu-title">MAIN MENU</div>
+    <div class="menu-item active">▦ Dashboard</div>
+    <div class="menu-item">🏆 Tournaments</div>
+    <div class="menu-item">👥 Teams</div>
+    <div class="menu-item">📊 Leaderboard</div>
+    <div class="menu-item">🎬 Graphics Control</div>
+
+    <div class="menu-title">SETTINGS</div>
+    <div class="menu-item">⚙ Settings</div>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <div>
+        <h1>Broadcast Dashboard</h1>
+        <p class="subtitle">PUBG MOBILE Tournament Control Center</p>
+      </div>
+      <div class="live">● SYSTEM READY</div>
+    </header>
+
+    <section class="stats">
+
+      <div class="card">
+        <div class="card-label">TOTAL TEAMS</div>
+        <div class="card-value blue" id="teamCount">4</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">TOTAL KILLS</div>
+        <div class="card-value green" id="totalKills">0</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">MATCH</div>
+        <div class="card-value orange">01</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">LEADER</div>
+        <div class="card-value purple" id="leader">---</div>
+      </div>
+
+    </section>
+
+    <section class="section">
+
+      <div class="section-head">
+        <div>
+          <h2>Live Match Scoreboard</h2>
+          <p class="subtitle">Team rankings and match statistics</p>
+        </div>
+
+        <div class="actions">
+          <button class="secondary" onclick="resetMatch()">Reset Match</button>
+          <button class="secondary" onclick="exportCSV()">Export CSV</button>
+          <button class="primary" onclick="addTeam()">+ Add Team</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Team</th>
+              <th>Kills</th>
+              <th>Placement</th>
+              <th>Kill Pts</th>
+              <th>Position Pts</th>
+              <th>Total Pts</th>
+            </tr>
+          </thead>
+
+          <tbody id="scoreboard"></tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <div class="footer">
+      EWA BROADCAST STUDIO © 2026 | ESPORTS WITH ABDULLAH
+    </div>
+
+  </main>
+</div>
+
+<script>
+
+let teams = [
+  { name: "Team Alpha", kills: 0, placement: 1 },
+  { name: "Team Bravo", kills: 0, placement: 2 },
+  { name: "Team Charlie", kills: 0, placement: 3 },
+  { name: "Team Delta", kills: 0, placement: 4 }
+];
+
+// Example placement points.
+// These can be customized for your tournament rules.
+const placementPoints = {
+  1: 10,
+  2: 6,
+  3: 5,
+  4: 4,
+  5: 3,
+  6: 2,
+  7: 1,
+  8: 1
+};
+
+function getPositionPoints(position) {
+  return placementPoints[position] || 0;
+}
+
+function render() {
+
+  const sorted = [...teams].sort((a, b) => {
+    const scoreA = a.kills + getPositionPoints(a.placement);
+    const scoreB = b.kills + getPositionPoints(b.placement);
+    return scoreB - scoreA;
+  });
+
+  const board = document.getElementById("scoreboard");
+  board.innerHTML = "";
+
+  sorted.forEach((team, index) => {
+
+    const killPoints = team.kills;
+    const positionPoints = getPositionPoints(team.placement);
+    const total = killPoints + positionPoints;
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td class="rank">#${index + 1}</td>
+
+      <td class="team"></td>
+
+      <td>
+        <input type="number" min="0" value="${team.kills}"
+        aria-label="Kills for ${team.name}"
+        onchange="updateKills('${encodeURIComponent(team.name)}', this.value)">
+      </td>
+
+      <td>
+        <select aria-label="Placement for ${team.name}"
+        onchange="updatePlacement('${encodeURIComponent(team.name)}', this.value)">
+          ${Array.from({length:16}, (_,i) => {
+            const p = i + 1;
+            return `<option value="${p}" ${team.placement === p ? "selected" : ""}>${p}</option>`;
+          }).join("")}
+        </select>
+      </td>
+
+      <td>${killPoints}</td>
+      <td>${positionPoints}</td>
+      <td class="total">${total}</td>
+    `;
+
+    row.querySelector(".team").textContent = team.name;
+    board.appendChild(row);
+  });
+
+  document.getElementById("teamCount").textContent = teams.length;
+
+  document.getElementById("totalKills").textContent =
+    teams.reduce((sum, team) => sum + team.kills, 0);
+
+  document.getElementById("leader").textContent =
+    sorted.length ? sorted[0].name : "---";
+}
+
+function updateKills(encodedName, value) {
+  const name = decodeURIComponent(encodedName);
+  const team = teams.find(t => t.name === name);
+  if (!team) return;
+
+  team.kills = Math.max(0, Math.floor(Number(value) || 0));
+  render();
+}
+
+function updatePlacement(encodedName, value) {
+  const name = decodeURIComponent(encodedName);
+  const team = teams.find(t => t.name === name);
+  if (!team) return;
+
+  team.placement = Number(value);
+  render();
+}
+
+function addTeam() {
+  const name = prompt("Enter team name:");
+
+  if (!name || !name.trim()) return;
+
+  if (teams.some(t => t.name.toLowerCase() === name.trim().toLowerCase())) {
+    alert("This team already exists!");
+    return;
+  }
+
+  teams.push({
+    name: name.trim(),
+    kills: 0,
+    placement: 1
+  });
+
+  render();
+}
+
+function resetMatch() {
+  if (!confirm("Are you sure you want to reset this match?")) return;
+
+  teams.forEach(team => {
+    team.kills = 0;
+    team.placement = 1;
+  });
+
+  render();
+}
+
+function exportCSV() {
+  const sorted = [...teams].sort((a, b) =>
+    (b.kills + getPositionPoints(b.placement)) -
+    (a.kills + getPositionPoints(a.placement))
+  );
+
+  const rows = [
+    ["Rank", "Team", "Kills", "Placement", "Kill Points", "Position Points", "Total Points"],
+    ...sorted.map((team, index) => [
+      index + 1,
+      team.name,
+      team.kills,
+      team.placement,
+      team.kills,
+      getPositionPoints(team.placement),
+      team.kills + getPositionPoints(team.placement)
+    ])
+  ];
+
+  const csv = rows.map(row =>
+    row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(",")
+  ).join("\n");
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "EWA_Match_Scoreboard.csv";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+render();
+
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js");
+  });
+}
+</script>
+</body>
+</html>
